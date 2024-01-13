@@ -1,0 +1,99 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+data = pd.read_csv('Assign3.csv')
+x = data['X'].values
+y = data['Y'].values
+# Reshape X and y arrays to work with scikit-learn's LinearRegression
+x = x.reshape(-1, 1) # Reshape X to a 2D array
+y = y.reshape(-1, 1)
+# Split the data into training and testing sets
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+# Create and fit a Linear Regression model
+model = LinearRegression()
+model.fit(x_train, y_train)
+# Get the coefficients (slope and intercept) of the linear regression model
+slope = model.coef_[0][0]
+intercept = model.intercept_[0]
+print(f"Slope: {slope}")
+print(f"Intercept: {intercept}")
+# Make predictions on the test data
+y_pred = model.predict(x_test)
+# Plot the training data
+plt.figure(figsize=(8, 6))
+plt.scatter(x_train, y_train, color='blue', label='Training Data')
+plt.plot(x_train, model.predict(x_train), color='red', linewidth=2, label='Linear Regression')
+plt.title('Training Data and Linear Regression Model')
+plt.xlabel('X')
+plt.ylabel('y')
+plt.legend()
+plt.show()
+# Plot the test data
+plt.figure(figsize=(8, 6))
+plt.scatter(x_test, y_test, color='blue', label='Test Data')
+plt.plot(x_test, y_pred, color='red', linewidth=2, label='Predictions')
+plt.title('Test Data and Predictions')
+plt.xlabel('X')
+plt.ylabel('y')
+plt.legend()
+plt.show()
+# Take new input for prediction
+new_value = float(input("Enter a new value for prediction: "))
+predicted_y = model.predict(np.array([[new_value]]))
+print(f"Predicted y for X={new_value}: {predicted_y[0][0]}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+# Data
+x = np.array([10, 9, 2, 15, 10, 16, 11, 16])
+y = np.array([95, 80, 10, 50, 45, 98, 38, 93])
+# Calculate means
+x_bar = np.mean(x)
+y_bar = np.mean(y)
+# Calculate the slope (m) and y-intercept (b)
+m = np.sum((x - x_bar) * (y - y_bar)) / np.sum((x - x_bar) ** 2)
+b = y_bar - m * x_bar
+# Predict risk score for 20 hours
+x_pred = 20
+y_pred = m * x_pred + b
+# Plot the data points and the best-fit line
+plt.scatter(x, y, label='Data Points')
+plt.plot(x, m * x + b, color='red', label='Best-fit Line')
+plt.scatter(x_pred, y_pred, color='green', marker='x', s=100, label=f'Prediction for {x_pred} hours: 
+{y_pred:.2f}')
+plt.xlabel('No of hours spent driving (x)')
+plt.ylabel('Risk Score on a scale of 0 – 100 (y)')
+plt.legend()
+plt.show()
+# Print the equation of the best-fit line
+print(f'Equation of the best-fit line: y = {m:.2f}x + {b:.2f}')
+print(f'Predicted risk score for {x_pred} hours: {y_pred:.2f}')

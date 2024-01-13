@@ -1,0 +1,25 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram, linkage
+from sklearn.metrics import silhouette_score
+# Load the dataset
+dataset = pd.read_csv('shopping_trends_updated.csv')
+#convert categorical columns into labels 
+data= pd.get_dummies(dataset)
+print(data)
+# Plot the dendrogram
+linked = linkage(data, method='ward', metric='euclidean')
+dendrogram(linked)
+plt.title('Hierarchical Clustering Dendrogram')
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.show()
+# Hierarchical clustering
+agglomerative = AgglomerativeClustering(n_clusters=2, linkage='ward', metric='euclidean')
+labels = agglomerative.fit_predict(data)
+print("unique Labels:", np.unique(labels))
+score = silhouette_score(data, labels)
+#score between -1 to 1
+print("Average Score:", score)

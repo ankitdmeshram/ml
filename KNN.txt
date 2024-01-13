@@ -1,0 +1,101 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, precision_score,classification_report, confusion_matrix
+from sklearn.preprocessing import StandardScaler
+# Load the dataset
+data = pd.read_csv('emails.csv')
+print(data)
+print("*****************")
+print("Column names of file")
+print(data.columns)
+print("\n")
+# Exclude non-numeric columns (select all rows & columns from 2nd up to but not including, the last column)
+target_variable = 'Prediction'
+X = data.select_dtypes(include=['number']).drop(target_variable, axis=1)
+print("--------Independent Variables--------")
+print(X)
+print("\n")
+Y = data['Prediction']                       # Target variable
+print("---------Dependent Variables---------")
+print(Y)
+print("\n")
+# calculating unique values
+print("Unique values in target variable-", np.unique(Y))
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.20, random_state=42)
+# Standardize the features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+#train the K-NN classifier
+knn_classifier = KNeighborsClassifier(n_neighbors=5)
+knn_classifier.fit(X_train, y_train)
+# Predictions on test dataset
+y_pred = knn_classifier.predict(X_test)
+print("Classfication report")
+print(classification_report(y_test, y_pred))
+print("\n")
+print("Confusion Matrix")
+print(confusion_matrix(y_test, y_pred))
+print("\n")
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)*100
+print("Accuracy:",accuracy,"%")
+# Calculate precision
+precision = precision_score(y_test, y_pred)*100
+print("Precision:", precision, "%")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import numpy as np
+from sklearn.metrics.pairwise import euclidean_distances
+from scipy.stats import mode
+import matplotlib.pyplot as plt
+#dataset
+X = np.array([[40, 20], [50, 50], [60, 90], [10, 25], [70, 70], [60, 10], [25, 80]])
+y = np.array([1, 0, 0, 1, 0, 1, 0 ]) 
+# New data point
+new_point = np.array([20, 35])
+#Step 1---Calculate Euclidean distances (built in method)
+distances = euclidean_distances([new_point], X)[0]
+#Step 2---Arrange distances in assending order
+sort_indices = np.argsort(distances)
+sorted_distances = distances[sort_indices]
+print("-------Distance of each data point in assending order-------")
+# Print distances in assending order
+for i, distance in enumerate(sorted_distances):
+    print(f"Distance", sort_indices[i] + 1,":", distance)
+# Plot the distances
+plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.Paired, label='Data Points')
+plt.scatter(new_point[0], new_point[1], color='red', marker='x', label='New Data Point')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.title('Data Points and New Data Point')
+plt.legend()
+plt.show()
+#Step 3----select value of k 
+k=5
+top_k = sort_indices[:k]
+top_k_label = y[top_k]
+#Step 4----select majority label 
+pred_label = mode(top_k_label).mode.item()
+print("Predicted Label for given data point:", pred_label)

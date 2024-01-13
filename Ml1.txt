@@ -1,0 +1,92 @@
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+import os
+import pandas as pd
+os.chdir(r"C:\Users\Vaide\OneDrive\Desktop\SYMCA LAB")
+data_csv=pd.read_csv('Book1.csv',na_values=["?"])
+print(data_csv)
+print("----------------------------------------------------------------")
+data_csv.info()
+print("----------------------------------------------------------------")
+data_csv.isna().sum()
+print(data_csv.isna().sum())
+print("----------------------------------------------------------------")
+
+print(data_csv.isnull().sum())
+print("----------------------------------------------------------------")
+
+#missing data
+missing=data_csv[data_csv.isnull().any(axis=1)]
+print(missing)
+print("----------------------------------------------------------------")
+data_csv.describe()
+print(data_csv.describe())
+print("----------------------------------------------------------------")
+
+#handling categorial data
+data_csv['Age'].fillna(data_csv["Age"].mean(),inplace=True)
+data_csv.isnull().sum()
+print(data_csv)
+print("----------------------------------------------------------------")
+
+data_csv['Income'].fillna(data_csv['Income'].median(),inplace=True)
+data_csv.isnull().sum()
+print(data_csv)
+print("----------------------------------------------------------------")
+
+data_csv['Region'].fillna(data_csv['Region'].mode()[0],inplace=True)
+
+data_csv.isnull().sum()
+print(data_csv)
+
+data_csv["Region"].value_counts().index[0]
+data_csv["Region"].fillna(data_csv["Region"].value_counts().index[0])
+print("-----------------data---------------------------")
+print(data_csv)
+
+#feature scaling
+
+sc = StandardScaler()
+df2 = data_csv.filter (["Age","Income"],axis=1)
+print("---------------printing age and income coloumn-----------------------")
+print(df2)
+df3 = sc.fit_transform(df2)
+df3 = pd.DataFrame(df3, columns=['Age','Income'])
+print ("-------------------feature scaling --------------------")
+print(df3)
+
+#categorial data into numerical
+le = LabelEncoder()
+data_csv = data_csv.iloc[:,:].values
+data_csv[:,0] = le.fit_transform(data_csv[:,0])
+print("---------------data in form of list----------------")
+print(data_csv)
+print("---------------Spliting into training and testing data----------------")
+#Spliting into training data
+
+# Separate the features (X) from the target variable (y)
+X = data_csv[:, 1:]
+y = data_csv[:, 0]
+
+# Split the data into a training set (70%) and a testing set (30%)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Create DataFrames for training and testing sets
+train_df = pd.DataFrame({'Age': X_train[:, 0], 'Income': X_train[:, 1], 'Label': y_train})
+test_df = pd.DataFrame({'Age': X_test[:, 0], 'Income': X_test[:, 1], 'Label': y_test})
+
+# Display the first few rows of each DataFrame
+print("Training Set:")
+print(train_df.head())
+
+print("\nTesting Set:")
+print(test_df.head())
+
+total_samples = len(X_train) + len(X_test)
+train_ratio = len(X_train) / total_samples
+test_ratio = len(X_test) / total_samples
+
+# Display the ratio
+print(f"Training Set Ratio: {train_ratio:.2%}")
+print(f"Testing Set Ratio: {test_ratio:.2%}")

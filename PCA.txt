@@ -1,0 +1,52 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_iris
+from sklearn.decomposition import PCA
+# Load the Iris dataset
+iris = load_iris()
+x=iris.data
+y=iris.target
+print("Features name")
+print(iris.feature_names)
+print(iris)
+# Standardize the data using StandardScaler
+scaler = StandardScaler()
+x_std = scaler.fit_transform(x)
+print("Standardized Data:")
+print(x_std)
+#Caluculate co-varience matrix
+co_var_mat=np.cov(x_std, rowvar=False)
+print("\n covariance matrix", co_var_mat)
+# eigen values value step 3
+eigenvalues,eigenvectors= np.linalg.eig(co_var_mat)
+print("\neigen vaues", eigenvalues)
+#step4 sort
+sorted_indices = np.argsort(eigenvalues)[::-1]
+print("\n Sorted", sorted_indices)
+sorted_eigenvalues = eigenvalues[sorted_indices]
+print("\n Sorted eigen values", sorted_eigenvalues)
+sorted_eigenv
+ectors = eigenvectors[:, sorted_indices]
+print("\n Sorted eigen vectors", sorted_eigenvectors)
+#step 5 :95% variance
+total_variance = sum(sorted_eigenvalues)
+variance_ratio = sorted_eigenvalues / total_variance
+print("\n Variance", variance_ratio)
+#Find the number of components needed to explain 95% of the variance
+cumulative_variance_ratio = np.cumsum(variance_ratio)
+num_components = np.argmax(cumulative_variance_ratio >= 0.95) + 1
+print("\n Number of components to explain 95% variance:", num_components)
+selected_eigenvectors = sorted_eigenvectors[:, :num_components]
+print("\n Selected eigen vectors", selected_eigenvectors)
+#step 6:
+x_pca = x_std.dot(selected_eigenvectors)
+print("\n no. of components", num_components)
+print("shape of data", x_pca.shape)
+#step 7: plot the transfer data
+plt.scatter(x_pca[:,0],x_pca[:,1], c = y, cmap='viridis')
+plt.xlabel('principal component 1')
+plt.ylabel('principal component 2')
+plt.title('PCA of cancer Dataset')
+plt.show()

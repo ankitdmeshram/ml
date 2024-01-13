@@ -1,0 +1,30 @@
+import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder
+from mlxtend.frequent_patterns import apriori, association_rules
+# Given dataset
+dataset = [
+    ["I1", "I2", "I3"],   ["I2", "I3", "I4"],  ["I4", "I5"],  ["I1", "I2", "I4"], ["I1", "I2", "I3", "I5"],
+    ["I1", "I2", "I3", "I4"] ]
+print("Given Data:", dataset)
+# Transaction Encoder
+te = TransactionEncoder()
+# Transform the dataset into a binary matrix (DataFrame)
+te_ary = te.fit(dataset).transform(dataset)
+df = pd.DataFrame(te_ary, columns=te.columns_)
+print("\nDataFrame")
+print(df)
+# Apriori algorithm
+# Find frequent itemsets with a minimum support of 50%
+frequent_itemsets = apriori(df, min_support=0.5, use_colnames=True)
+print("\nFrequent Itemsets with a minimum support of 50%:")
+print(frequent_itemsets)
+# Association rules
+# Generate association rules with a minimum confidence of 60%
+rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.6)
+print("\nAssociation Rules with a minimum confidence of 60%:")
+print(rules)
+# Filter rules with confidence greater than 50%
+confidence = rules[rules['confidence'] > 0.9]
+print("\nAssociation Rules with Confidence grater than 90%:")
+pd.set_option("display.max_columns", None)  # Set to None to display all columns
+print(confidence)
